@@ -138,7 +138,3 @@ The goal of this project is to build a real-world full-stack application with:
 Sagar Adak
 
 ---
-
-## ⭐ Note
-
-This project is built for learning and final year project demonstration.
