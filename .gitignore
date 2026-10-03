@@ -1,0 +1,10 @@
+# Environment files
+.env
+backend/.env
+frontend/.env
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
