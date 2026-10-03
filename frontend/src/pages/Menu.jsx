@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
 import FoodCard from '../components/FoodCard';
-import { categories } from '../data/mockData';
+import { categories, menuItems as mockMenuItems } from '../data/mockData';
 import clsx from 'clsx';
 
 export default function Menu() {
@@ -19,10 +19,16 @@ export default function Menu() {
     fetch('http://localhost:5000/api/foods')
       .then(res => res.json())
       .then(data => {
-        console.log("Foods received from Backend:", data);
-        setMenuItems(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setMenuItems(data);
+        } else {
+          setMenuItems(mockMenuItems);
+        }
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error('Error fetching foods, using fallback:', err);
+        setMenuItems(mockMenuItems);
+      });
   }, []);
 
   const filteredItems = useMemo(() => {

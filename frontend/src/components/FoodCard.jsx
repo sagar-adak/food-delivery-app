@@ -54,13 +54,17 @@ export default function FoodCard({ item }) {
       whileHover={{ y: -8 }}
       className="bg-white rounded-[1.25rem] overflow-hidden shadow-soft hover:shadow-hover transition-all duration-300 flex flex-col group cursor-pointer border border-gray-100"
     >
-      <Link to={`/product/${item._id}`} className="relative h-56 overflow-hidden">
+      <Link to={`/product/${item._id || item.id}`} className="relative h-56 overflow-hidden">
         <motion.img
           whileHover={{ scale: 1.05 }}
           transition={{ duration: 0.4 }}
-          src={item.image}
+          src={item.image || '/images/foods/pizza.jpg'}
           alt={item.name}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/images/foods/pizza.jpg';
+          }}
         />
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-sm font-bold shadow-sm">
           ₹{item.price.toFixed(2)}
@@ -69,7 +73,7 @@ export default function FoodCard({ item }) {
       
       <div className="p-5 flex flex-col flex-grow">
         <div className="flex flex-col mb-2">
-          <Link to={`/product/${item._id}`} className="hover:text-primary transition-colors">
+          <Link to={`/product/${item._id || item.id}`} className="hover:text-primary transition-colors">
             <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors mb-1">{item.name}</h3>
           </Link>
           <div className="flex items-center gap-1 text-sm text-gray-600">

@@ -12,8 +12,17 @@ export default function Home() {
   useEffect(() => {
     fetch('http://localhost:5000/api/foods')
       .then(res => res.json())
-      .then(data => setFoods(data))
-      .catch(err => console.error(err));
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setFoods(data);
+        } else {
+          setFoods(menuItems);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching foods, falling back to mockData:', err);
+        setFoods(menuItems);
+      });
   }, []);
 
   const popularItems = foods.slice(0, 4);
@@ -74,7 +83,7 @@ export default function Home() {
             {/* Using a featured image as the hero graphic */}
             <div className="relative rounded-full w-80 h-80 md:w-[500px] md:h-[500px] mx-auto overflow-hidden shadow-2xl border-8 border-white group">
               <img 
-                src={foods.length > 0 ? foods[0].image : '/images/default-food.jpg'} 
+                src={foods.length > 0 ? foods[0].image : '/images/foods/pizza.jpg'} 
                 alt="Featured Food" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
