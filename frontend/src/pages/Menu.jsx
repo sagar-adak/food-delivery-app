@@ -3,8 +3,12 @@ import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
 import FoodCard from '../components/FoodCard';
-import { categories, menuItems as mockMenuItems } from '../data/mockData';
 import clsx from 'clsx';
+
+const DEFAULT_CATEGORIES = [
+  'Pizza', 'Burger', 'Pasta', 'Sandwich', 'French Fries',
+  'Fried Chicken', 'Cold Coffee', 'Milkshake', 'Dessert', 'Soft Drink'
+];
 
 export default function Menu() {
   const location = useLocation();
@@ -19,17 +23,23 @@ export default function Menu() {
     fetch('http://localhost:5000/api/foods')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setMenuItems(data);
-        } else {
-          setMenuItems(mockMenuItems);
         }
       })
       .catch(err => {
-        console.error('Error fetching foods, using fallback:', err);
-        setMenuItems(mockMenuItems);
+        console.error('Error fetching foods:', err);
       });
   }, []);
+
+  const categories = useMemo(() => {
+    const fetchedCats = menuItems.map(f => f.category).filter(Boolean);
+    const allCats = Array.from(new Set([...DEFAULT_CATEGORIES, ...fetchedCats]));
+    return [
+      { id: 'all', name: 'All' },
+      ...allCats.map(cat => ({ id: cat, name: cat }))
+    ];
+  }, [menuItems]);
 
   const filteredItems = useMemo(() => {
     return menuItems.filter(item => {
@@ -97,10 +107,10 @@ export default function Menu() {
         {/* Menu Grid */}
         <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           <AnimatePresence>
-            {filteredItems.map((item) => (
+            {filteredItems.map((item, index) => (
               <motion.div
                 layout
-                key={item._id}
+                key={item._id || item.id || index}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}

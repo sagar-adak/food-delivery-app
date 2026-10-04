@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Star, Minus, Plus, ShoppingCart, CheckCircle, CreditCard, Edit, Trash2 } from 'lucide-react';
-import { menuItems as mockMenuItems } from '../data/mockData';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
@@ -25,18 +24,16 @@ export default function FoodDetails() {
     fetch(`http://localhost:5000/api/foods/${id}`)
       .then(res => res.json())
       .then(data => {
-        if (data && data._id) {
+        if (data && (data._id || data.id)) {
           setItem(data);
         } else {
-          const fallback = mockMenuItems.find(m => String(m.id) === String(id) || String(m._id) === String(id));
-          setItem(fallback || null);
+          setItem(null);
         }
         setLoading(false);
       })
       .catch(err => {
         console.error(err);
-        const fallback = mockMenuItems.find(m => String(m.id) === String(id) || String(m._id) === String(id));
-        setItem(fallback || null);
+        setItem(null);
         setLoading(false);
       });
   }, [id]);

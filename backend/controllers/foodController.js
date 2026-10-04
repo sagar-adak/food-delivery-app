@@ -68,7 +68,7 @@ const deleteFood = async (req, res) => {
   const food = await Food.findById(req.params.id);
 
   if (food) {
-    await food.remove();
+    await Food.deleteOne({ _id: req.params.id });
     res.json({ message: 'Food removed' });
   } else {
     res.status(404).json({ message: 'Food not found' });

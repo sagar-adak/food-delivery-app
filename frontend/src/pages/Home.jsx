@@ -1,10 +1,14 @@
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Star, TrendingUp, Clock } from 'lucide-react';
 import FoodCard from '../components/FoodCard';
 import Button from '../components/Button';
-import { useState, useEffect } from 'react';
-import { menuItems, categories } from '../data/mockData';
+
+const DEFAULT_CATEGORIES = [
+  'Pizza', 'Burger', 'Pasta', 'Sandwich', 'French Fries',
+  'Fried Chicken', 'Cold Coffee', 'Milkshake', 'Dessert', 'Soft Drink'
+];
 
 export default function Home() {
   const [foods, setFoods] = useState([]);
@@ -13,17 +17,20 @@ export default function Home() {
     fetch('http://localhost:5000/api/foods')
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setFoods(data);
-        } else {
-          setFoods(menuItems);
         }
       })
       .catch(err => {
-        console.error('Error fetching foods, falling back to mockData:', err);
-        setFoods(menuItems);
+        console.error('Error fetching foods:', err);
       });
   }, []);
+
+  const categories = useMemo(() => {
+    const fetchedCats = foods.map(f => f.category).filter(Boolean);
+    const allCats = Array.from(new Set([...DEFAULT_CATEGORIES, ...fetchedCats]));
+    return allCats.map(cat => ({ id: cat, name: cat }));
+  }, [foods]);
 
   const popularItems = foods.slice(0, 4);
 
@@ -154,7 +161,7 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {popularItems.map((item, index) => (
               <motion.div
-                key={item._id}
+                key={item._id || item.id || index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
